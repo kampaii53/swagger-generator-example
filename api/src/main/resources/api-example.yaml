@@ -1,0 +1,528 @@
+openapi: 3.0.1
+info:
+  title: test-api-service
+  description: Test API microservice
+  version: 0.0.1-SNAPSHOT
+servers:
+  - url: http://localhost:9999/test-api-service
+    description: Generated server url
+paths:
+  /user:
+    get:
+      tags:
+        - user-controller
+      operationId: getUser
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserSessionDto'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - user-controller
+      operationId: setCurrentSession
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSessionDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserSessionDto'
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - bearerAuth: []
+components:
+  schemas:
+    ErrorDetails:
+      type: object
+      properties:
+        fieldName:
+          type: string
+        message:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetails'
+        message:
+          type: string
+        paramName:
+          type: string
+    UserSessionDto:
+      type: object
+      x-class-extra-annotation: "@javax.persistence.Entity" # будет доступно с релизом 6.0.0 генератора
+      properties:
+        id:
+          type: integer
+          format: int64
+        userPartyId:
+          type: string
+          format: uuid
+        workingPartyId:
+          type: string
+          format: uuid
+        profileType:
+          type: string
+          enum:
+            - GE
+            - FT
+            - HR
+    LinkedOrganizationShortDto:
+      type: object
+      properties:
+        avatarExt:
+          type: string
+        branchTypeEnum:
+          type: string
+          enum:
+            - BRANCH
+            - HEAD_BRANCH
+        organizationName:
+          type: string
+        kpp:
+          type: string
+        legalForm:
+          type: string
+        partyId:
+          type: string
+          format: uuid
+        avatarLogo:
+          type: string
+        status:
+          $ref: '#/components/schemas/OrganizationShortStatusInfo'
+        taxNumber:
+          type: string
+        partyRoleId:
+          type: string
+          format: uuid
+    OrganizationShortInfoResponseWithLinkedOrganizationDto:
+      type: object
+      properties:
+        avatarExt:
+          type: string
+        created:
+          type: string
+          format: date-time
+        fullName:
+          type: string
+        kpp:
+          type: string
+        legalForm:
+          type: string
+        managerName:
+          type: string
+        managerPost:
+          type: string
+        ogrn:
+          type: string
+        okpo:
+          type: string
+        partyId:
+          type: string
+          format: uuid
+        avatarLogo:
+          type: string
+        linkedOrganizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedOrganizationShortDto'
+        shortName:
+          type: string
+        status:
+          $ref: '#/components/schemas/OrganizationShortStatusInfo'
+        taxNumber:
+          type: string
+        updated:
+          type: string
+          format: date-time
+        validFor:
+          $ref: '#/components/schemas/ValidForDto'
+    OrganizationShortStatusInfo:
+      type: object
+      properties:
+        code:
+          type: string
+        text:
+          type: string
+        textAdm:
+          type: string
+    ValidForDto:
+      type: object
+      properties:
+        startDateTime:
+          type: string
+          format: date-time
+        endDateTime:
+          type: string
+          format: date-time
+    AccountDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        accountId:
+          type: string
+        sourceId:
+          type: string
+    AddressDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        partyId:
+          type: string
+          format: uuid
+        area:
+          type: string
+        block:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        district:
+          type: string
+        fiasCode:
+          type: string
+        fiasId:
+          type: string
+        flat:
+          type: string
+        house:
+          type: string
+        okato:
+          type: string
+        oktmo:
+          type: string
+        postalCode:
+          type: string
+        region:
+          type: string
+        settlement:
+          type: string
+        street:
+          type: string
+        type:
+          type: string
+          enum:
+            - JURIDICAL
+            - FACTUAL
+            - REGISTRATION
+        unrestrictedValue:
+          type: string
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+        validFor:
+          $ref: '#/components/schemas/ValidForDto'
+    BankAccountDto:
+      required:
+        - currencyCodeNum
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        partyId:
+          type: string
+          format: uuid
+        bankName:
+          type: string
+        bic:
+          type: string
+        inn:
+          maxLength: 10
+          minLength: 0
+          type: string
+        kpp:
+          type: string
+        correspondentAccount:
+          type: string
+        accountNumber:
+          type: string
+        swift:
+          type: string
+        iban:
+          type: string
+        accountHolder:
+          type: string
+        currencyCodeNum:
+          type: string
+        validFor:
+          $ref: '#/components/schemas/ValidForDto'
+    CommentDto:
+      type: object
+      properties:
+        author:
+          type: string
+        commentText:
+          type: string
+        updateTime:
+          type: string
+          format: date-time
+        createTime:
+          type: string
+          format: date-time
+    ContactMediumDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        partyId:
+          type: string
+          format: uuid
+        description:
+          type: string
+        mediumType:
+          type: string
+          enum:
+            - PHONE
+            - EMAIL
+        preferred:
+          type: boolean
+        value:
+          type: string
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+        validFor:
+          $ref: '#/components/schemas/ValidForDto'
+        partyRoleId:
+          type: string
+          format: uuid
+    ExternalSystemDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        code:
+          type: string
+        createTime:
+          type: string
+          format: date-time
+        validFor:
+          $ref: '#/components/schemas/ValidForDto'
+    FullStatusDto:
+      type: object
+      properties:
+        updateTime:
+          type: string
+          format: date-time
+        isVisible:
+          type: boolean
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentDto'
+        type:
+          $ref: '#/components/schemas/StatusTypeDto'
+        status:
+          $ref: '#/components/schemas/StatusValueDto'
+        childStatuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/FullStatusDto'
+    IndividualDto:
+      type: object
+      properties:
+        partyId:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/FullStatusDto'
+        userId:
+          type: string
+        login:
+          type: string
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressDto'
+        bankAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccountDto'
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMediumDto'
+        partyRoles:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyRoleDto'
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        fullName:
+          type: string
+        isVisible:
+          type: boolean
+        birthDate:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+        snils:
+          type: string
+        taxNumber:
+          type: string
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+        isResident:
+          type: boolean
+        validFor:
+          $ref: '#/components/schemas/ValidForDto'
+        currentPartyRoleId:
+          type: string
+          format: uuid
+        externalSystem:
+          $ref: '#/components/schemas/ExternalSystemDto'
+        fullNameShortFormNominative:
+          type: string
+        fullNameGenitive:
+          type: string
+        loyaltyAttr:
+          type: string
+        type:
+          type: string
+    PartyRoleDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        partyRoleId:
+          type: string
+          format: uuid
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountDto'
+        engagedParty:
+          type: string
+          format: uuid
+        relatedParty:
+          type: string
+          format: uuid
+        status:
+          type: integer
+          format: int32
+        roleType:
+          type: string
+          enum:
+            - EMPLOYEE
+            - PARTNER
+            - CUSTOMER
+            - HOLDING
+            - BRANCH
+            - DEPARTMENT
+            - CABINET
+            - ROLE_ADMIN
+            - ROLE_EMPLOYEE
+            - ROLE_STV_AGENT
+            - ROLE_ORG_OWNER
+            - SELF_EMPLOYEE
+            - ROLE_MINIMAL_ACCESS_EMPLOYEE
+        isAccountant:
+          type: boolean
+        isHead:
+          type: boolean
+        trustFromAdmin:
+          type: boolean
+        isConfidant:
+          type: boolean
+        isEmployee:
+          type: boolean
+        validFor:
+          $ref: '#/components/schemas/ValidForDto'
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+        employeeNumber:
+          type: integer
+          format: int32
+        dismissalDate:
+          type: string
+          format: date-time
+        productOfferingCategory:
+          type: string
+        type:
+          type: string
+        isSignEligible:
+          type: boolean
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactMediumDto'
+    StatusTypeDto:
+      type: object
+      properties:
+        code:
+          type: string
+        text:
+          type: string
+        textAdm:
+          type: string
+    StatusValueDto:
+      type: object
+      properties:
+        code:
+          type: string
+        text:
+          type: string
+        textAdm:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
